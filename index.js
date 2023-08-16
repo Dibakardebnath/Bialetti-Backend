@@ -10,9 +10,7 @@ const { UserModel } = require('./Models/UserModel');
 
 const app = express();
 
-app.use(cors({
-  origin : "*"
-}))
+app.use((req, res, next) => { res.header({"Access-Control-Allow-Origin": "*"}); next(); })
 
  app.use(express.json());
 
@@ -59,7 +57,7 @@ app.post("/login",async(req, res) => {
           }
           if(err){
             res.status(200).json({msg:"error"})
-            // console.log(err)
+           
           }
         });
     }
@@ -76,7 +74,6 @@ app.get("/product", async (req, res) => {
 
   try {
     
-
     const filter={}
     if(type) filter.type={$regex:type, $options:"i"};
     let query = UserModel.find(filter);
@@ -92,10 +89,9 @@ app.get("/product", async (req, res) => {
       query = query.skip(skip).limit(limitperpage);
     }
 
-    const user = await query.exec(); // Execute the query
+    const user = await query.exec(); 
 
-    const total = await UserModel.countDocuments(); // Use countDocuments() instead of deprecated count()
-
+    const total = await UserModel.countDocuments();
     res.json({ total, user });
   } catch (error) {
     res.json({ error: error });
@@ -117,61 +113,6 @@ app.get("/product", async (req, res) => {
 //        res.status(200).json({msg:"Successfully created"})
        
 // })
-
-// app.put("/user/edit/:id",Auth,async(req, res) => {
-//    try {
-//        const edit_id=req.params.id
-//        const payload=req.body
-   
-//        const user_id=req.user_id
-//        const sign_user=await SignUpModel.findOne({_id: user_id})
-//        const sign_email=sign_user.email
-//        console.log(sign_email)
-
-//        const user=await UserModel.findOne({_id: edit_id})
-//        const user_email=user.email
-//        console.log(user_email)
-
-//        if(sign_email===user_email) {
-//            await UserModel.findByIdAndUpdate(edit_id,payload)
-//            res.status(200).json({msg:"updated successfully"})
-//        }else{
-//            res.send("error updating")
-//        }
-//    } catch (error) {
-//        console.log(error)
-//    }
-  
-// })
-
-
-// app.delete("/user/delete/:id",Auth,async(req,res) => {
-//    try {
-       
-//       const delete_id = req.params.id
-      
-//        const user_id=req.user_id
-//        const sign_user=await SignUpModel.findOne({_id: user_id})
-//        const sign_email=sign_user.email
-     
-
-//       const user=await UserModel.findOne({_id:delete_id});
-//       const user_mail=user.email
-   
-
-//       if(user_mail===sign_email) {
-//          await UserModel.findByIdAndDelete({_id:delete_id});
-//          res.send("deleted successfully");
-//       }else{
-//        res.send("deleted error");
-//       }
-
-//    } catch (error) {
-//        console.log(error);
-       
-//    }
-// })
-
 
 
 
